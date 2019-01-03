@@ -1,4 +1,5 @@
 import React from 'react'
+import base from '../base'
 import Header from './Header'
 import Fish from './Fish'
 import Inventory from './Inventory'
@@ -9,6 +10,30 @@ class App extends React.Component {
   state = {
     fishes: {},
     order: {}
+  }
+  componentDidMount() {
+    const { params } = this.props.match
+    const localStorageRef = localStorage.getItem(`${params.storeId}_order`)
+    if (localStorageRef) {
+      this.setState({
+        order: JSON.parse(localStorageRef)
+      })
+    }
+    this.ref = base.syncState(`${params.storeId}/fishes`, {
+      context: this,
+      state: 'fishes'
+    })
+  }
+
+  componentDidUpdate() {
+    const { params } = this.props.match
+    localStorage.setItem(
+      `${params.storeId}_order`,
+      JSON.stringify(this.state.order)
+    )
+  }
+  componentWillUnmount() {
+    base.removeBinding(this.ref)
   }
   addFish = fish => {
     const fishes = { ...this.state.fishes }
