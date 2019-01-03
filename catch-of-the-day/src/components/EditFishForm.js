@@ -1,14 +1,34 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 class EditFishForm extends React.Component {
-  editFish = () => {}
+  static propTypes = {
+    updateFish: PropTypes.func,
+    deleteFish: PropTypes.func,
+    index: PropTypes.string,
+    fish: PropTypes.shape({
+      name: PropTypes.string,
+      price: PropTypes.number,
+      status: PropTypes.string,
+      desc: PropTypes.string,
+      image: PropTypes.string
+    })
+  }
   handleChange = e => {
-    console.log(e.currentTarget)
+    const newFish = {
+      ...this.props.fish,
+      [e.currentTarget.name]: e.currentTarget.value
+    }
+    this.props.updateFish(this.props.index, newFish)
+  }
+  deleteFish = key => {
+    console.log(key)
+    this.props.deleteFish(key)
   }
   render() {
     const { name, price, status, desc, image } = this.props.fish
     return (
-      <form action="" className="fish-edit" onSubmit={this.createFish}>
+      <form action="" className="fish-edit">
         <input
           name="name"
           ref={this.nameRef}
@@ -46,7 +66,9 @@ class EditFishForm extends React.Component {
           onChange={this.handleChange}
           value={image}
         />
-        <button type="submit">Edit Fish</button>
+        <button type="button" onClick={() => this.deleteFish(this.props.index)}>
+          Delete Fish
+        </button>
       </form>
     )
   }
